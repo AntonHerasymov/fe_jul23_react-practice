@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.scss';
 
 import usersFromServer from './api/users';
@@ -26,14 +26,59 @@ function findCategoryById(categoryId) {
   return categoriesFromServer.find(category => category.id === categoryId);
 }
 
-export const App = () => (
-  <div className="section">
-    <div className="container">
-      <h1 className="title">Product Categories</h1>
+function filterByOwnerId(ownerId, visibleProducts) {
+  return visibleProducts
+    .filter(product => product.category.ownerId === ownerId);
+}
 
-      <Panel users={usersFromServer} categories={categoriesFromServer} />
+function filterByCategoryId(categoryId, visibleProducts) {
+  return visibleProducts
+    .filter(product => product.category.id === categoryId);
+}
 
-      <ProductTable products={products} />
+function filterByName(productName, visibleProducts) {
+  return visibleProducts
+    .filter(product => product.name.toLowerCase().includes(productName));
+}
+
+export const App = () => {
+  const [filterByOwnerField, setFilterByOwnerField] = useState('');
+  const [filterByCategoryField, setFilterByCategoryField] = useState('');
+  const [filterByProductField, setFilterByProductField] = useState('');
+
+  let visibleProducts = [...products];
+
+  if (filterByOwnerField) {
+    visibleProducts = filterByOwnerId(filterByOwnerField, visibleProducts);
+  }
+
+  if (filterByCategoryField) {
+    visibleProducts
+    = filterByCategoryId(filterByCategoryField, visibleProducts);
+  }
+
+  if (filterByProductField) {
+    visibleProducts
+    = filterByName(filterByProductField, visibleProducts);
+  }
+
+  return (
+    <div className="section">
+      <div className="container">
+        <h1 className="title">Product Categories</h1>
+
+        <Panel
+          users={usersFromServer}
+          categories={categoriesFromServer}
+          activeOwner={filterByOwnerField}
+          activeCategory={filterByCategoryField}
+          setFilterByOwnerField={setFilterByOwnerField}
+          setFilterByCategoryField={setFilterByCategoryField}
+          setFilterByProductField={setFilterByProductField}
+        />
+
+        <ProductTable products={visibleProducts} />
+      </div>
     </div>
-  </div>
-);
+  );
+};

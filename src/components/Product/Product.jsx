@@ -13,7 +13,7 @@ export const Product = ({ product }) => {
       <td data-cy="ProductName">{name}</td>
       <td data-cy="ProductCategory">
         <span role="img" aria-labelledby="emoji-desc">{icon}</span>
-        -
+        {` - `}
         {title}
       </td>
 

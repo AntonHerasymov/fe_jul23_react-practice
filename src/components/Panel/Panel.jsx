@@ -1,5 +1,19 @@
-export const Panel = ({ users, categories }) => {
-  const x = '';
+import cn from 'classnames';
+
+export const Panel = ({
+  users,
+  categories,
+  activeOwner,
+  activeCategory,
+  setFilterByOwnerField,
+  setFilterByCategoryField,
+  setFilterByProductField,
+}) => {
+  const onResetClick = () => {
+    setFilterByOwnerField('');
+    setFilterByCategoryField('');
+    setFilterByProductField('');
+  };
 
   return (
     <div className="block">
@@ -10,16 +24,24 @@ export const Panel = ({ users, categories }) => {
           <a
             data-cy="FilterAllUsers"
             href="#/"
+            onClick={() => setFilterByOwnerField('')}
+            className={cn({
+              'is-active': !activeOwner,
+            })}
           >
             All
-            {x}
           </a>
 
           {/* className="is-active" */}
           {users.map(user => (
             <a
+              key={user.id}
               data-cy="FilterUser"
               href="#/"
+              onClick={() => setFilterByOwnerField(user.id)}
+              className={cn({
+                'is-active': user.id === activeOwner,
+              })}
             >
               {user.name}
             </a>
@@ -34,7 +56,10 @@ export const Panel = ({ users, categories }) => {
               type="text"
               className="input"
               placeholder="Search"
-              value="qwe"
+              onChange={
+                event => setFilterByProductField(event
+                  .target.value.trim().toLowerCase())
+              }
             />
 
             <span className="icon is-left">
@@ -56,16 +81,29 @@ export const Panel = ({ users, categories }) => {
           <a
             href="#/"
             data-cy="AllCategories"
-            className="button is-success mr-6 is-outlined"
+            className={cn(
+              'button mr-6 is-outlined',
+              {
+                'is-success': !activeCategory,
+              },
+            )}
+            onClick={() => setFilterByCategoryField('')}
           >
             All
           </a>
           {/* className="button mr-2 my-1 is-info" */}
           {categories.map(category => (
             <a
+              key={category.id}
               data-cy="Category"
-              className="button mr-2 my-1"
+              className={cn(
+                'button mr-2 my-1',
+                {
+                  'is-info': category.id === activeCategory,
+                },
+              )}
               href="#/"
+              onClick={() => setFilterByCategoryField(category.id)}
             >
               {category.title}
             </a>
@@ -77,6 +115,7 @@ export const Panel = ({ users, categories }) => {
             data-cy="ResetAllButton"
             href="#/"
             className="button is-link is-outlined is-fullwidth"
+            onClick={() => onResetClick()}
           >
             Reset all filters
           </a>
